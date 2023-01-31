@@ -1,0 +1,15 @@
+namespace: knative-serving
+
+resources:
+  # - https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-crds.yaml
+  -  https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-core.yaml
+  - https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-default-domain.yaml
+
+
+patches:
+  - path: cm-config-network-patch.yaml 
+    target:
+        version: v1
+        kind: ConfigMap
+        name: config-network
+        namespace: knative-serving
