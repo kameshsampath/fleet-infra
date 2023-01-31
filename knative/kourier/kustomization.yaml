@@ -1,4 +1,4 @@
 namespace: kourier-system
 
 resources:
-  - https://github.com/knative/net-kourier/releases/download/knative-v1.8.1/kourier.yaml
+  - https://github.com/knative/net-kourier/releases/download/knative-v1.9.0/kourier.yaml

@@ -1,6 +1,6 @@
 namespace: knative-serving
 
 resources:
-  # - https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-crds.yaml
-  -  https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-core.yaml
-  - https://github.com/knative/serving/releases/download/knative-v1.8.3/serving-default-domain.yaml
+  # - https://github.com/knative/serving/releases/download/knative-v1.9.0/serving-crds.yaml
+  -  https://github.com/knative/serving/releases/download/knative-v1.9.0/serving-core.yaml
+  - https://github.com/knative/serving/releases/download/knative-v1.9.0/serving-default-domain.yaml
