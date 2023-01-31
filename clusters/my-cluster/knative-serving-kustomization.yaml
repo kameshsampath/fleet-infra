@@ -12,4 +12,14 @@ spec:
     kind: GitRepository
     name: flux-system
   targetNamespace: knative-serving
-
+  patches:
+    - patch: |-
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: config-network
+        data:
+          ingress-class: "kourier.ingress.networking.knative.dev"           
+      target:
+        name: config-network
+        kind: ConfigMap
