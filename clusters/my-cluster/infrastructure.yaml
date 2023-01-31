@@ -46,8 +46,7 @@ spec:
         metadata:
           name: config-domain
           namespace: knative-serving
-        data:
-          127.0.0.1.sslip.io:""      
+        data: {"127.0.0.1.sslip.io": ""}  
       target:
         name: config-domain
         kind: ConfigMap
