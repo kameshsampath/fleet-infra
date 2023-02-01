@@ -6,6 +6,8 @@ For this demo we will be using [FluxCD](https://fluxcd.io/) as the GitOps platfo
 
 ## Tools
 
+Download and add the following tools to your `$PATH`,
+
 - [Task](https://taskfile.dev/)
 - [Flux](https://fluxcd.io/flux/cmd/)
 - [K3D](https://k3d.io)
@@ -203,6 +205,8 @@ flux create source git hello-world \
   --export > ./clusters/dev/hello-world/hello-world-source.yaml
 ```
 
+>**Tip**: task create_hello_world_source
+
 ## Deploy Application using GitOps
 
 As we will be using kustomize to deploy the application, let us create the Flux kustomization resource that will watch for manifest changes on Git repository `$HELLO_WORLD_APP_FORK_REPO`,
@@ -217,6 +221,8 @@ flux create kustomization hello-world \
   --export > ./clusters/dev/hello-world-kustomization.yaml
 ```
 
+>**Tip**: task create_hello_world_kustomization
+
 After you have created these files, edit `$GITOPS_DEMO_HOME/.gitignore` and remove the entry `**/hello-world-*.yaml` to allow these files to be committed. Add, commit and push the changes to your(fork) repository.
 
 Start to watch for flux to synchronize the resources, you can also watch it from the Web Console <http://127.0.0.1.sslip.io:30091/applications>,
@@ -225,9 +231,55 @@ Start to watch for flux to synchronize the resources, you can also watch it from
 flux get kustomizations --watch
 ```
 
-A successful sync should show an output like,
+A successful sync should show an output like( output trimmed for brevity),
 
 ```shell
+NAME            REVISION        SUSPENDED       READY   MESSAGE                        
+flux-system     main/c85869d    False           True    Applied revision: main/c85869d
+infra-controllers       main/c85869d    False   True    Applied revision: main/c85869d
+infra-knative-serving   main/c85869d    False   True    Applied revision: main/c85869d
+hello-world     main/89db5d2    False   True    Applied revision: main/89db5d2
 ```
 
-Checkout more [guides](https://fluxcd.io/flux/guides/) and [usecases](https://fluxcd.io/flux/use-cases/) on [FluxCD](https://fluxcd.io) website.
+**(OR)**
+
+![Hello World Sync](./docs/hello-world-sync.png)
+
+Call the service using cURL,
+
+```shell
+curl http://hello-world.default.127.0.0.1.sslip.io:30080/
+````
+
+```json
+{
+  "Prefix": "Hello",
+  "Name": "",
+  "Message": "Hello,"
+}
+```
+
+**(OR)** 
+
+```shell
+curl http://hello-world.default.127.0.0.1.sslip.io:30080/name=Newton
+```
+
+```json
+{
+  "Prefix": "Hello",
+  "Name": "Newton",
+  "Message": "Hello,Newton"
+}
+```
+
+## Cleanup
+
+```shell
+task delete_cluster
+```
+
+## References
+
+- [FluxCD Guides](https://fluxcd.io/flux/guides/)
+- [Usecases](https://fluxcd.io/flux/use-cases/)

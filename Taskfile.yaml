@@ -51,3 +51,27 @@ tasks:
         --branch=main \
         --personal \
         --path=./clusters/dev
+  create_hello_world_source:
+    silent: true
+    generates:
+      - "$GITOPS_DEMO_HOME/clusters/dev/hello-world-source.yaml"
+    cmds:
+     - |
+        flux create source git hello-world \
+        --url=$HELLO_WORLD_APP_FORK_REPO \
+        --branch=main \
+        --interval=30s \
+        --export > $GITOPS_DEMO_HOME/clusters/dev/hello-world-source.yaml
+  create_hello_world_kustomization:
+    silent: true
+    generates:
+      - "$GITOPS_DEMO_HOME/clusters/dev/hello-world-kustomization.yaml"
+    cmds:
+     - |
+        flux create kustomization hello-world \
+        --target-namespace=default \
+        --source=hello-world \
+        --path="./config/serverless" \
+        --prune=true \
+        --interval=5m \
+        --export > $GITOPS_DEMO_HOME/clusters/dev/hello-world-kustomization.yaml
