@@ -1,0 +1,27 @@
+apiVersion: k3d.io/v1alpha4
+kind: Simple
+metadata:
+  name: ${K3D_CLUSTER_NAME}
+servers: 1
+image: rancher/k3s:${K3S_VERSION}
+ports:
+  # weave-gitops
+  - port: 0.0.0.0:30091:30091 # same as `--port '30091:30091@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+  # Kourier
+  - port: 0.0.0.0:30080:30080 # same as `--port '30080:30080@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+  - port: 0.0.0.0:30443:30443 # same as `--port '30443:30443@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+registries:
+  use:
+    - "k3d-${REGISTRY_NAME}:${REGISTRY_PORT}"
+options:
+  k3s:
+    extraArgs: 
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
