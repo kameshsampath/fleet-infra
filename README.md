@@ -77,7 +77,7 @@ Ensure all the required infrastructure components are up and running,
 ### Knative
 
 ```shell
-kubectl get pods -n knative serving
+kubectl get pods -n knative-serving
 ```
 
 ```shell
@@ -158,7 +158,13 @@ NAME            URL                                               LATESTCREATED 
 helloworld-go   http://helloworld-go.default.127.0.0.1.sslip.io   helloworld-go-00001   helloworld-go-00001   True
 ```
 
-If all went well you can cURL the service <http://helloworld-go.default.127.0.0.1.sslip.io:30080/>, it will return a response like `All set to deploy Hello World, the GitOps way!!!`.
+If all went well you can cURL the service,
+
+```shell
+curl http://helloworld-go.default.127.0.0.1.sslip.io:30080
+```
+
+It will return a response like `Hello All set to deploy Hello World, the GitOps way!!!!`.
 
 Clean up the test service using the command,
 
@@ -262,7 +268,7 @@ curl http://hello-world.default.127.0.0.1.sslip.io:30080/
 **(OR)** 
 
 ```shell
-curl http://hello-world.default.127.0.0.1.sslip.io:30080/name=Newton
+curl http://hello-world.default.127.0.0.1.sslip.io:30080?name=Newton
 ```
 
 ```json
@@ -272,6 +278,82 @@ curl http://hello-world.default.127.0.0.1.sslip.io:30080/name=Newton
   "Message": "Hello,Newton"
 }
 ```
+
+### Induce a change
+
+As part of this change we will make the service use the greeting prefix as **Hi**. To do that we will update the service containers environment variable `GREETING_PREFIX`.
+
+Edit the file `$GITOPS_DEMO_HOME/clusters/dev/hello-world-kustomization.yaml` and update it to look as shown,
+
+```yaml
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: hello-world
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  path: ./config/serverless
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: hello-world
+  targetNamespace: default
+  patches:
+    - patch: |-
+        apiVersion: serving.knative.dev/v1
+        kind: Service
+        metadata:
+          name: hello-world
+        spec:
+          template:
+            spec:
+              containers:
+                - env:
+                    - name: GREETING_PREFIX
+                      value: Hi
+                  image: docker.io/kameshsampath/go-hello-world
+      target:
+        name: hello-world
+        namespace: default
+        group: serving.knative.dev
+        version: v1
+        kind: Service
+```
+
+Save, commit and push the changes back to `flux-hello-world` repository. The push should trigger as sync in few seconds.
+
+Open a new terminal and watch for the `hello-world` service,
+
+```shell
+watch kubectl get ksvc hello-world
+```
+
+In few seconds you should see the service revision changing from `hello-world-00001` to `hello-world-00002`,
+
+```shell
+NAME          URL                                             LATESTCREATED       LATESTREADY
+       READY   REASON
+hello-world   http://hello-world.default.127.0.0.1.sslip.io   hello-world-00002   hello-world-0
+0002   True
+```
+
+Lets call the service again,
+
+```shell
+curl http://hello-world.default.127.0.0.1.sslip.io:30080?name=Newton
+```
+
+```json
+{
+  "Prefix": "Hi",
+  "Name": "Newton",
+  "Message": "Hi,Newton"
+}
+```
+
+>**TIP**: You can also check the commit has that is currently applied via the Web Console. To get commit has run the command `git log --pretty=oneline`
 
 ## Cleanup
 
