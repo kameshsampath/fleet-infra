@@ -4,22 +4,6 @@ A demo to show case how to deploy the traditional Hello World application using 
 
 For this demo we will be using [FluxCD](https://fluxcd.io/) as the GitOps platform on Kubernetes.
 
-## Tools
-
-Download and add the following tools to your `$PATH`,
-
-- [Task](https://taskfile.dev/)
-- [Flux](https://fluxcd.io/flux/cmd/)
-- [K3D](https://k3d.io)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub CLI](https://github.com/cli/cli)
-
-## Whats  required
-
-- [GitHub PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-  
-- A GitHub user to fork the GitOps Demo Fork
-
 ## Fork the demo repo
 
 Run the following command to fork the demo repo under your account,
@@ -30,6 +14,43 @@ cd flux-hello-world
 ```
 
 For the rest of the tutorial this folder will be called as `$GITOPS_DEMO_HOME`.
+
+## Whats Required
+
+### Tools
+
+Download and add the following tools to your `$PATH`,
+
+- [Task](https://taskfile.dev/)
+- [Flux](https://fluxcd.io/flux/cmd/)
+- [K3D](https://k3d.io)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [GitHub CLI](https://github.com/cli/cli)
+
+>**IMPORTANT**: Ensure all the tools are available on your `$PATH` before proceeding further.
+
+### GitHub
+
+- [GitHub PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+  
+- A GitHub user to fork the GitOps Demo Fork
+
+### Environment Variables
+
+Copy `$GITOPS_DEMO_HOME/.env.example` --> `$GITOPS_DEMO_HOME/.env` and update the `.env` to update `$GITHUB_USER`, `$GITHUB_TOKEN`. Leave the `HELLO_WORLD_APP_FORK_REPO` as it is we will update it later.
+
+Load the environment variables on to current shell. Open a terminal window and navigate to `$GITOPS_DEMO_HOME` and run,
+
+```shell
+source .env
+```
+
+Test if all the variables are loaded successfully,
+
+```shell
+# should return the directory where you have cloned this demo sources
+echo $GITOPS_DEMO_HOME
+```
 
 ## Create Cluster
 

@@ -16,7 +16,7 @@ tasks:
     silent: true
   reload_env:
     cmds:
-      - direnv allow .
+      - source .env
     silent: true
   create_cluster:
     cmds:
