@@ -2,14 +2,11 @@
 
 version: "3"
 
-dotenv:
-  - .env
-
 tasks:
-  create_work_dirs:
+  write_kubeconfig:
     cmds:
       - mkdir -p {{.KUBECONFIG_DIR}}
-      - mkdir -p work
+      - k3d kubeconfig get $K3D_CLUSTER_NAME > $KUBECONFIG
     vars:
       KUBECONFIG_DIR:
         sh: dirname $KUBECONFIG
@@ -48,7 +45,7 @@ tasks:
         flux bootstrap github \
         --owner=$GITHUB_USER \
         --repository=flux-hello-world \
-        --branch=main \
+        --branch=dev \
         --personal \
         --path=./clusters/dev
   create_hello_world_source:

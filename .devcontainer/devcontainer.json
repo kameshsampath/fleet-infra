@@ -1,0 +1,46 @@
+{
+  "image": "docker.io/kameshsampath/gitops-devcontainer",
+  "runArgs": [
+    "--init"
+  ],
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "extensions": [
+    "redhat.vscode-yaml",
+    "EditorConfig.EditorConfig"
+  ],
+  "containerEnv": {
+    "GITOPS_DEMO_HOME": "${containerWorkspaceFolder}",
+    "KUBECONFIG": "${localWorkspaceFolder}/.kube/config",
+    "K3D_CLUSTER_NAME": "flux-hello-world",
+    "ARGOCD_SERVER_URL": "127.0.0.1:30080",
+    "K3S_VERSION": "v1.24.9-k3s1",
+    "REGISTRY_NAME": "${localEnv:K3D_CLUSTER_NAME}-registry.localhost",
+    "REGISTRY_PORT": "30081",
+    "REGISTRY_URL": "k3d-${localEnv:REGISTRY_NAME}:${localEnv:REGISTRY_PORT}",
+    "GITHUB_USER": "${localEnv:GITHUB_USER}",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "HELLO_WORLD_APP_FORK_REPO": "${localEnv:HELLO_WORLD_APP_FORK_REPO}"
+  },
+  "remoteEnv": {
+    "GITOPS_DEMO_HOME": "${containerWorkspaceFolder}",
+    "KUBECONFIG": "${localWorkspaceFolder}/.kube/config",
+    "K3D_CLUSTER_NAME": "flux-hello-world",
+    "ARGOCD_SERVER_URL": "127.0.0.1:30080",
+    "K3S_VERSION": "v1.24.9-k3s1",
+    "REGISTRY_NAME": "${localEnv:K3D_CLUSTER_NAME}-registry.localhost",
+    "REGISTRY_PORT": "30081",
+    "REGISTRY_URL": "k3d-${localEnv:REGISTRY_NAME}:${localEnv:REGISTRY_PORT}",
+    "GITHUB_USER": "${localEnv:GITHUB_USER}",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "HELLO_WORLD_APP_FORK_REPO": "${localEnv:HELLO_WORLD_APP_FORK_REPO}"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+  // required to be root to start the k3d cluster using docker socket
+  "remoteUser": "root"
+}

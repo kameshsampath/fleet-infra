@@ -19,7 +19,17 @@ For the rest of the tutorial this folder will be called as `$GITOPS_DEMO_HOME`.
 
 ### Tools
 
-Download and add the following tools to your `$PATH`,
+#### Using Dev Containers
+
+**Recommended** to use [VSCode DevContainers](https://code.visualstudio.com/docs/devcontainers/containers) to avoid installing tools locally. 
+
+Click to [Install the Dev Containers Extension](vscode:extension/ms-vscode-remote.remote-containers). The Dev container has all the required tools installed and configured. 
+
+#### All Local(Optional)
+
+If you want to do all locally then install the following tools,
+
+Download and add the following tools and add your `$PATH`,
 
 - [Task](https://taskfile.dev/)
 - [Flux](https://fluxcd.io/flux/cmd/)
@@ -27,15 +37,24 @@ Download and add the following tools to your `$PATH`,
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [GitHub CLI](https://github.com/cli/cli)
 
->**IMPORTANT**: Ensure all the tools are available on your `$PATH` before proceeding further.
-
 ### GitHub
 
 - [GitHub PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
   
 - A GitHub user to fork the GitOps Demo Fork
 
+The following two variables is **required** for the demo to work, set and export them as shown,
+
+```shell
+export GITHUB_USER=<your github username>
+export GITHUB_TOKEN=<your github PAT>
+```
+
 ### Environment Variables
+
+>**NOTE**: 
+> Only needed for all local setup, when using Dev Containers all required environment variables from `.env.example` are automatically loaded
+> You can safely **SKIP** this section when using Dev Containers
 
 Copy `$GITOPS_DEMO_HOME/.env.example` --> `$GITOPS_DEMO_HOME/.env` and update the `.env` to update `$GITHUB_USER`, `$GITHUB_TOKEN`. Leave the `HELLO_WORLD_APP_FORK_REPO` as it is we will update it later.
 
@@ -93,13 +112,15 @@ The command instructs flux to hook the repo `$GITHUB_USER/flux-hello-world` and 
 
 >**NOTE**: It will take few mins for bootstrap to complete, depending upon your bandwidth.
 
-Ensure all the required infrastructure components are up and running,
-
 ### Knative
 
+Wait for all Knative Serving components to be ready,
+
 ```shell
-kubectl get pods -n knative-serving
+watch kubectl get pods -n knative-serving
 ```
+
+Ensure the following _Statuses_ before moving on to next section,
 
 ```shell
 NAME                                     READY   STATUS      RESTARTS   AGE
@@ -134,6 +155,8 @@ kourier.ingress.networking.knative.dev
 ```shell
 kubectl describe configmap/config-domain --namespace knative-serving | less
 ```
+
+>**NOTE**: If you dont get the output as shown below, try running the above command after few seconds.
 
 Should display an output like,
 
@@ -180,6 +203,8 @@ helloworld-go   http://helloworld-go.default.127.0.0.1.sslip.io   helloworld-go-
 ```
 
 If all went well you can cURL the service,
+
+>**IMPORTANT**: The service needs to be called from the **Host** as all ports from the services are forward to host docker socket
 
 ```shell
 curl http://helloworld-go.default.127.0.0.1.sslip.io:30080
@@ -229,7 +254,7 @@ flux create source git hello-world \
   --url=$HELLO_WORLD_APP_FORK_REPO \
   --branch=main \
   --interval=30s \
-  --export > ./clusters/dev/hello-world/hello-world-source.yaml
+  --export > ./clusters/dev/hello-world-source.yaml
 ```
 
 >**Tip**: task create_hello_world_source
